@@ -2,7 +2,7 @@ from functools import reduce
 from typing import Sequence
 
 from day2.directions import Reading
-from day2.factories import DirectionFactory, DirectionsFactoryAim, Factory
+from day2.factories import DirectionsFactory, DirectionsFactoryAim, Factory
 
 
 def calculate(factory: Factory, lines: Sequence[str]) -> int:
@@ -17,5 +17,5 @@ def calculate(factory: Factory, lines: Sequence[str]) -> int:
 with open('in.txt') as f:
     values = [line.strip() for line in f.readlines()]
 
-print(calculate(DirectionFactory(), values))
+print(calculate(DirectionsFactory(), values))
 print(calculate(DirectionsFactoryAim(), values))

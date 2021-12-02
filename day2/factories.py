@@ -9,7 +9,7 @@ class Factory(Protocol):
         raise NotImplementedError
 
 
-class DirectionFactory(Factory):
+class DirectionsFactory(Factory):
 
     @staticmethod
     def parse_line(line: str) -> Direction:
