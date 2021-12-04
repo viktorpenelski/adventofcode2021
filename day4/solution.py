@@ -13,7 +13,7 @@ class Position:
 class Board:
     numbers: List[List[int]]
     lookup: Dict[int, List[Position]]
-    _number_hits: Set[int]
+    _numbers_visited: Set[int]
     _row_hits: Dict[int, int]
     _col_hits: Dict[int, int]
     won: bool = False
@@ -21,7 +21,7 @@ class Board:
     def __init__(self, numbers: List[List[int]]):
         self.numbers = numbers
         self.lookup = defaultdict(lambda: [])
-        self._number_hits = set()
+        self._numbers_visited = set()
         self._row_hits = defaultdict(lambda: 0)
         self._col_hits = defaultdict(lambda: 0)
         for row, line in enumerate(numbers):
@@ -39,7 +39,7 @@ class Board:
     def visit(self, num: int) -> bool:
         positions = self.lookup[num]
         if len(positions) > 0:
-            self._number_hits.add(num)
+            self._numbers_visited.add(num)
             for pos in positions:
                 self._row_hits[pos.row] = self._row_hits[pos.row] + 1
                 self._col_hits[pos.col] = self._col_hits[pos.col] + 1
@@ -49,7 +49,7 @@ class Board:
         return False
 
     def sum_not_hit_numbers(self) -> int:
-        return reduce(lambda so_far, num: so_far if num in self._number_hits else so_far + num,
+        return reduce(lambda so_far, num: so_far if num in self._numbers_visited else so_far + num,
                       [num for row in self.numbers for num in row],
                       0)
 
