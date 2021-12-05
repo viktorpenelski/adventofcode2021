@@ -65,7 +65,7 @@ def parse_input(filename: str) -> (List[Board], List[int]):
 
 
 def solve() -> None:
-    boards, input_numbers = parse_input('in-p.txt')
+    boards, input_numbers = parse_input('in.txt')
     boards_won = 0
     for num in input_numbers:
         for board in boards:
