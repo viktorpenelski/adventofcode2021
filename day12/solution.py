@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Set, Dict
 
 
@@ -32,21 +33,22 @@ def parse_input() -> Dict[str, CaveNode]:
     return caves
 
 
-def traverse(cave: CaveNode, caves: Dict[str, CaveNode], visited: Set[str], small_pass=False):
+@lru_cache(maxsize=10_000)
+def traverse(cave: CaveNode, visited: frozenset, small_pass=False):
     if cave.name == 'end':
         return 1
     if cave.name in visited and cave.is_small() and small_pass and cave.name != 'start':
         small_pass = False
     elif cave.name in visited and cave.is_small():
         return 0
-
-    visited.add(cave.name)
+    s = set(visited)
+    s.add(cave.name)
     paths = 0
     for connection in cave.connections:
-        paths += traverse(connection, caves, visited.copy(), small_pass)
+        paths += traverse(connection, frozenset(s), small_pass)
     return paths
 
 
 caves = parse_input()
-print(traverse(caves['start'], caves, set()))
-print(traverse(caves['start'], caves, set(), True))
+print(traverse(caves['start'], frozenset()))
+print(traverse(caves['start'], frozenset(), True))
