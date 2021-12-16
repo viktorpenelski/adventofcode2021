@@ -1,17 +1,5 @@
 from abc import abstractmethod, ABC
-from functools import reduce
-from typing import Tuple, List
-
-
-def _get_packet_version(binary_string: str):
-    return int(binary_string[3:6], 2)
-
-
-def packet_factory(binary_string: str):
-    if _get_packet_version(binary_string) == 4:
-        return LiteralPacket(binary_string)
-    else:
-        return OpPacket.instantiate(binary_string)
+from typing import Tuple, List, Callable
 
 
 class Packet(ABC):
@@ -30,6 +18,16 @@ class Packet(ABC):
 
     @abstractmethod
     def value(self) -> int:
+        pass
+
+
+class UnpackStrategy(ABC):
+
+    def __init__(self, packet_factory: Callable[[str], Packet]):
+        self.packet_factory = packet_factory
+
+    @abstractmethod
+    def get_packets_and_len(self, binary_string: str) -> Tuple[List[Packet], int]:
         pass
 
 
@@ -63,74 +61,26 @@ class LiteralPacket(Packet):
 
 
 class OpPacket(Packet, ABC):
-    def __init__(self, binary_string: str):
+
+    def __init__(self, binary_string: str, strategy: UnpackStrategy):
         super().__init__(binary_string)
         self.type_length_id = int(self.binary_string[6], 2)
-        packets, last_pos = self.get_packets_and_len(binary_string)
+        packets, last_pos = strategy.get_packets_and_len(binary_string)
         self.packets = packets
         self.last_pos = last_pos
+        self.strategy = strategy
 
     def sum_versions(self):
         return self.version + sum([p.sum_versions() for p in self.packets])
 
     def value(self) -> int:
         values = [v.value() for v in self.packets]
-        if self.id == 0:
-            return sum(values)
-        if self.id == 1:
-            return reduce(lambda a, b: a*b, values, 1)
-        if self.id == 2:
-            return min(values)
-        if self.id == 3:
-            return max(values)
-        if self.id == 5:
-            return int(values[0] > values[1])
-        if self.id == 6:
-            return int(values[0] < values[1])
-        if self.id == 7:
-            return int(values[0] == values[1])
-
-    @staticmethod
-    def instantiate(binary_string: str) -> 'OpPacket':
-        type_length_id = int(binary_string[6], 2)
-        if type_length_id == 0:
-            return BitsLenOpPacket(binary_string)
-        else:
-            return NumLenOpPacket(binary_string)
+        return self._calculate_value(values)
 
     @abstractmethod
-    def get_packets_and_len(self, binary_string: str) -> Tuple[List[Packet], int]:
+    def _calculate_value(self, values: List[int]):
         pass
 
     def _get_last_bit_pos(self) -> int:
         return self.last_pos
 
-
-class BitsLenOpPacket(OpPacket):
-    def get_packets_and_len(self, binary_string: str) -> Tuple[List[Packet], int]:
-        # next 15 bits are total length in bits of sub-packets
-        sub_packet_length = int(binary_string[7:22], 2)
-        last_bit_pos = 22 + sub_packet_length
-        sub_packet_bits = binary_string[22:last_bit_pos]
-        packets = []
-        while len(sub_packet_bits) > 0:
-            p = packet_factory(sub_packet_bits)
-            sub_packet_bits = sub_packet_bits[p._get_last_bit_pos():]
-            packets.append(p)
-
-        return packets, last_bit_pos
-
-
-class NumLenOpPacket(OpPacket):
-
-    def get_packets_and_len(self, binary_string: str) -> Tuple[List[Packet], int]:
-        # next 11 bits are the number of sub-packets immediately contained by this packet
-        nr_sub_packets = int(binary_string[7:18], 2)
-        sub_packet_bits = binary_string[18:]
-        packets = []
-        while nr_sub_packets > 0:
-            p = packet_factory(sub_packet_bits)
-            sub_packet_bits = sub_packet_bits[p._get_last_bit_pos():]
-            packets.append(p)
-            nr_sub_packets -= 1
-        return packets, len(binary_string) - len(sub_packet_bits)

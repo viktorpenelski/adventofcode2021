@@ -1,4 +1,4 @@
-from day16.packets import Packet, packet_factory
+from day16.factories import packet_factory
 
 
 def parse_input() -> str:
@@ -12,7 +12,6 @@ def hex_to_bin(hex_str: str) -> str:
         int_line = int(c, 16)
         out += format(int_line, "04b")
     return out
-
 
 
 if __name__ == '__main__':

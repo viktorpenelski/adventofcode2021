@@ -1,7 +1,8 @@
 import unittest
 
-from day16.solution import Packet, hex_to_bin
-from day16.packets import BitsLenOpPacket, NumLenOpPacket, OpPacket, LiteralPacket, packet_factory
+from day16.packets import LiteralPacket
+from day16.solution import hex_to_bin
+from day16.factories import packet_factory
 
 
 class Tests(unittest.TestCase):
@@ -48,22 +49,18 @@ class Tests(unittest.TestCase):
 
     def test_tripple_nested_op_with_five_packets(self):
         packet = packet_factory(hex_to_bin("A0016C880162017C3686B18A3D4780"))
-        assert BitsLenOpPacket == type(packet)
         self.assertEqual(31, packet.sum_versions())
 
     def test_multi_bits_len_nested_op(self):
         packet = packet_factory(hex_to_bin("C0015000016115A2E0802F182340"))
-        assert BitsLenOpPacket == type(packet)
         self.assertEqual(23, packet.sum_versions())
 
     def test_multi_num_len_nested_op(self):
         packet = packet_factory(hex_to_bin("620080001611562C8802118E34"))
-        assert NumLenOpPacket == type(packet)
         self.assertEqual(12, packet.sum_versions())
 
     def test_num_len_nested_op(self):
         packet = packet_factory(hex_to_bin("8A004A801A8002F478"))
-        assert NumLenOpPacket == type(packet)
         self.assertEqual(16, packet.sum_versions())
 
     def test_operator_packet_1(self):
