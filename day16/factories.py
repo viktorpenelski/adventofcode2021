@@ -1,7 +1,11 @@
-def _get_all_op_subclasses():
-    from day16.packets import OpPacket
+import importlib
+from typing import List
 
-    import day16.op_packets
+
+def _get_all_op_subclasses_from_modules(modules: List[str]):
+    from day16.packets import OpPacket
+    for module in modules:
+        importlib.import_module(module)
     subclass_list = []
 
     def recurse(klass):
@@ -25,5 +29,5 @@ def packet_factory(binary_string: str) -> 'Packet':
     else:
         type_length_id = int(binary_string[6], 2)
         strategy = BitsLenUnpackStrategy(packet_factory) if type_length_id == 0 else NumLenUnpackStrategy(packet_factory)
-        return _get_all_op_subclasses()[packet_id](binary_string, strategy)
+        return _get_all_op_subclasses_from_modules(['day16.op_packets'])[packet_id](binary_string, strategy)
 
