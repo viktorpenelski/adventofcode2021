@@ -61,6 +61,7 @@ class LiteralPacket(Packet):
 
 
 class OpPacket(Packet, ABC):
+    """All inheriting members should include an ADVERTISE_ID int field."""
 
     def __init__(self, binary_string: str, strategy: UnpackStrategy):
         super().__init__(binary_string)
@@ -68,7 +69,6 @@ class OpPacket(Packet, ABC):
         packets, last_pos = strategy.get_packets_and_len(binary_string)
         self.packets = packets
         self.last_pos = last_pos
-        self.strategy = strategy
 
     def sum_versions(self):
         return self.version + sum([p.sum_versions() for p in self.packets])
