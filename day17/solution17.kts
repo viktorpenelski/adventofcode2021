@@ -45,7 +45,6 @@ fun parseInputs(): Pair<Point, Point> {
         }.first()
 }
 
-val startMilis = System.currentTimeMillis()
 val start = Point(0, 0)
 val (botLeft, topRight) = parseInputs()
 val target = Rectangle(botLeft, topRight)
@@ -58,7 +57,6 @@ val shotsInTarget = (0..1000).asSequence().flatMap { x ->
 
 val maxY = shotsInTarget.maxOf { it }
 val validShots = shotsInTarget.count()
-val endMilis = System.currentTimeMillis() - startMilis
 
-println("found maxY $maxY for $endMilis ms")
-println("there are $validShots valid points")
+println("maxY: $maxY")
+println("valid starting velocities: $validShots ")
