@@ -49,8 +49,8 @@ val start = Point(0, 0)
 val (botLeft, topRight) = parseInputs()
 val target = Rectangle(botLeft, topRight)
 
-val shotsInTarget = (0..1000).asSequence().flatMap { x ->
-    (-1000..1000).asSequence().mapNotNull { y ->
+val shotsInTarget = (0..target.topRight.x).asSequence().flatMap { x ->
+    (target.botLeft.y..1000).asSequence().mapNotNull { y ->
         State(start, Point(x,y), target).simulateSteps()
     }
 }
