@@ -1,4 +1,7 @@
 import java.io.File
+import java.util.concurrent.ForkJoinPool
+import kotlin.streams.asStream
+import kotlin.streams.toList
 
 data class Point(val x: Int, val y: Int) {
     fun isWithin(rec: Rectangle) =
@@ -48,12 +51,11 @@ fun parseInputs(): Pair<Point, Point> {
 val start = Point(0, 0)
 val (botLeft, topRight) = parseInputs()
 val target = Rectangle(botLeft, topRight)
-
-val shotsInTarget = (0..target.topRight.x).asSequence().flatMap { x ->
-    (target.botLeft.y..1000).asSequence().mapNotNull { y ->
+val shotsInTarget = (0..target.topRight.x).asSequence().asStream().parallel().flatMap<Int> { x ->
+    (target.botLeft.y..1000).asSequence().asStream().parallel().map { y ->
         State(start, Point(x,y), target).simulateSteps()
-    }
-}
+    }.filter { it != null }
+}.toList()
 
 val maxY = shotsInTarget.maxOf { it }
 val validShots = shotsInTarget.count()
