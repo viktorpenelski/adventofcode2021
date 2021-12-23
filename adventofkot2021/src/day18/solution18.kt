@@ -14,7 +14,6 @@ sealed class Tk {
 
 }
 
-
 // [[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 fun parse(line: String): List<Tk> {
     return line.toCharArray().asSequence()
@@ -156,15 +155,16 @@ fun main() {
         }.toList()
     println(magnitude(sumOfAllInOrder))
 
-    var maxMagnitude = -1
-    for (i in 0..snailfishNumbers.lastIndex) {
-        for (j in i..snailfishNumbers.lastIndex) {
-            val sum1 = reduce(add(snailfishNumbers[i], snailfishNumbers[j]))
-            val sum2 = reduce(add(snailfishNumbers[j], snailfishNumbers[i]))
-            val magnitude = max(magnitude(sum1), magnitude(sum2))
-            if (magnitude > maxMagnitude) maxMagnitude = magnitude
-        }
-    }
-    println(maxMagnitude)
+    val maxOfTwoSum = snailfishNumbers.asSequence().flatMap<List<Tk>, Int> { snailNum1 ->
+        snailfishNumbers.asSequence()
+            .filter { it != snailNum1 }
+            .map { snailNum2 ->
+                val sum1 = reduce(add(snailNum1, snailNum2))
+                val sum2 = reduce(add(snailNum2, snailNum1))
+                max(magnitude(sum1), magnitude(sum2))
+            }
+    }.maxOf { it }
+    println(maxOfTwoSum)
+
 }
 

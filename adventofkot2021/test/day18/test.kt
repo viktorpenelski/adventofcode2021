@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class Test {
     @Test
     fun `test simple slit using one number`() {
-        val split = split(listOf(Tk.Number(15)))
+        val (split, _) = split(listOf(Tk.Number(15)))
         val expected = parse("[7,8]")
         assertEquals(split, expected)
     }
@@ -45,8 +45,9 @@ class Test {
         )
 
         for ((before, after) in examples) {
-            if (explode(parse(before)) != parse(after)) {
-                throw Exception("$before should have been $after")
+            val (explode, _) = explode(parse(before))
+            if (explode != parse(after)) {
+                throw Exception("$before should have exploded to $after, but was $explode")
             }
         }
     }
