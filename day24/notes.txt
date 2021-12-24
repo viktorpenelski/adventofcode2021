@@ -1,0 +1,312 @@
+inp w
+mul x 0
+add x z     x=z
+mod x 26    x = 0..25
+div z 1
+add x 14    x = 14..39
+eql x w     x = 0  (w always 1-9)
+eql x 0     x = 1
+mul y 0
+add y 25       y = 25    y = 25
+mul y x     y = 25 (* 1)
+add y 1     y = 26
+mul z y                 z = z*26
+mul y 0     y = 0
+add y w     y = 1..9
+add y 1     y = 2..10
+mul y x     y = 2..10
+add z y                 z = z + (2..10);
+
+z0 = w0 + 1
+
+inp w
+mul x 0     x = 0
+add x z     x = z
+mod x 26    x = 0..25
+div z 1
+add x 15    x = 15..40
+eql x w     x = 0
+eql x 0     x = 1
+mul y 0     y = 0
+add y 25    y = 25
+mul y x     y = 25 (* 1)
+add y 1     y = 26
+mul z y             z = z * 26
+mul y 0     y = 0
+add y w     y = 1..9
+add y 7     y = 8..16
+mul y x     
+add z y             z = z + (8..16)
+
+z1 = (26 * z0) + w1 + 7
+
+inp w
+mul x 0
+add x z
+mod x 26        x = 0..25
+div z 1
+add x 15        x = 15..40
+eql x w         x = 0
+eql x 0         x = 1
+mul y 0         y = 0
+add y 25
+mul y x         
+add y 1         y = 26
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+z2 = (26 * z1) + w2 + 13
+
+inp w
+mul x 0
+add x z
+mod x 26        x = 0..25
+div z 26            z = z / 26
+add x -6        x = -6..19
+eql x w         x = 0..1
+eql x 0         x = 0..1 (reversed)
+mul y 0
+add y 25        y = 25
+mul y x         y = 25 OR y = 0
+add y 1         y = 26 OR y = 1
+mul z y             z = z * 26 or z = z * 1
+mul y 0         y = 0
+add y w         y = 1..9
+add y 10        y = 11..19
+mul y x         y = 11..19 OR y = 0
+add z y             z = z + y
+
+since 26 * z1 mod 26 is always 0,
+condition3 is w2 + 13 - 6 == w3
+
+w2 + 7 == w3
+w2 = 1 w3 = 8
+w2 = 2 w3 = 9
+
+are only valid
+condition3
+
+DIGIT =
+    when (z2%26 - 6) == w3 -> z3 = z2 / 26
+    when (z2%26 - 6) != w3 -> z3 = (z2 / 26) * 26 + w3 + 10
+
+inp w
+mul x 0
+add x z
+mod x 26   x = 0..25
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 0
+mul y x
+add z y
+
+z4 = (26 * z3) + w4 + 0
+
+inp w
+mul x 0
+add x z
+mod x 26     x = 0..25
+div z 26            z = z / 26
+add x -4     x = -4..21
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+condition5
+w4-4 = w5
+w4=5 w5=1
+w4=6 w5=2
+w4=7 w5=3
+w4=8 w5=4
+w4=9 w5=5
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0     x = 1
+add y 25    y = 25
+mul y x
+add y 1
+mul z y         z = z * 26
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+z6 = (z5*26) + w6 + 11
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 1
+add x 15
+eql x w
+eql x 0     x = 1
+mul y 0
+add y 25    y = 25
+mul y x
+add y 1
+mul z y         z = z * 26
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+
+z7 = (z6*26) + w7 + 6
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 1
+add x 11
+eql x w
+eql x 0     x = 1
+mul y 0
+add y 25    y = 25
+mul y x
+add y 1
+mul z y         z = z * 26
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+z 8 = (z7 * 26) + w8 + 1
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y
+
+condition9
+w9 == w8 + 1
+z9 /= 26 (-1)
+
+inp w
+mul x 0
+add x z
+mod x 26      x = 0..25
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+condition 10
+w10 == w7 + 6
+z10 /= 26 (-2)
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 26
+add x -3
+eql x w
+eql x 0
+mul y 0
+add y 25    y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 14
+mul y x
+add z y
+
+condition 11
+w11 = w6 + 8 (w6 + 11 - 3)
+z11 (-3)
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 26
+add x -9
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26    x = 0..25
+div z 26
+add x -9
+eql x w
+eql x 0
+mul y 0
+add y 25       y = 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 10
+mul y x
+add z y
