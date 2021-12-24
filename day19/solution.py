@@ -152,8 +152,6 @@ all_scanners[0].pos = Point3d(0, 0, 0)  # assume orientation of the first scanne
 to_be_fixed = all_scanners[1:]  # consider all other scanners "unaligned"
 fixed_scanners = [all_scanners[0]]  # consider first scanner "aligned"
 while len(fixed_scanners) < len(all_scanners):
-    fixed = None
-    scanner = None
     for sc in to_be_fixed:
         fixed = try_fix_scanner(sc, fixed_scanners)
         if fixed:
